@@ -1,0 +1,32 @@
+{
+  "name": "clidao",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "bin": {
+    "dao": "./dist/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Adriein/clidao.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Adriein/clidao/issues"
+  },
+  "homepage": "https://github.com/Adriein/clidao#readme",
+  "dependencies": {
+    "@types/node": "^16.0.0",
+    "@types/pg": "^8.6.0",
+    "dotenv": "^10.0.0",
+    "enquirer": "^2.3.6",
+    "pg": "^8.6.0",
+    "reflect-metadata": "^0.1.13",
+    "typescript": "^4.3.5"
+  }
+}
