@@ -1,5 +1,6 @@
 import { PostgreRepository } from './Data/PostgreRepository';
 import * as fs from 'fs';
+import String from './String';
 
 export class DaoGenerator {
   private repo = new PostgreRepository();
@@ -7,28 +8,18 @@ export class DaoGenerator {
   public constructor(private tablename: string) {}
 
   public generate() {
-    //const tableMetadata = this.repo.getTableMetadata(this.tablename);
+    const tableMetadata = this.repo.getTableMetadata(this.tablename);
 
-    const className = this.toCamelCase(this.tablename);
+    const className = String.camelCase(this.tablename, true);
 
-    fs.writeFileSync(`${className}.ts`, this.constructClass());
+    fs.writeFileSync(`${className}.ts`, this.constructClass(className));
   }
 
-  private capitalizeFirstLetter(word: string): string {
-    return `${word.charAt(0).toUpperCase()}${word.slice(1)}`;
-  }
+  
 
-  private toCamelCase(tableName: string): string {
-    const words = tableName.split('_');
-
-    const sanitizedTableName = word;
-
-    return `${this.capitalizeFirstLetter(tableName)}`;
-  }
-
-  private constructClass(): string {
-    return `export class ${this.toCamelCase(this.tablename)}{
-
+  private constructClass(className: string): string {
+    return `export class ${className}{
+        
     }`;
   }
 }
