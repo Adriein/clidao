@@ -1,27 +1,21 @@
 import { PostgreRepository } from './Data/PostgreRepository';
+var Eta = require('eta')
 import * as fs from 'fs';
-import String from './String';
+
 
 export class DaoGenerator {
   private repo = new PostgreRepository();
 
-  public constructor(private tablename: string) {}
+  public constructor() {}
 
-  public generate() {
-    const tableMetadata = this.repo.getTableMetadata(this.tablename);
+  public async execute(tablename: string) {
+    const tableMetadata = await this.repo.getTableColumns(tablename);
+    const template = fs.readFileSync(`${process.cwd()}/src/Templates/BaseTemplate.eta`, {encoding: 'utf-8'});
 
-    const className = String.camelCase(this.tablename, true);
-
-    fs.writeFileSync(`${className}.ts`, this.constructClass(className));
+    const dao = Eta.render(Eta.compile(template), { name: tablename, columns: tableMetadata.columns });
+    fs.writeFileSync(`${tablename}.ts`,dao);
   }
 
-  
-
-  private constructClass(className: string): string {
-    return `export class ${className}{
-        
-    }`;
-  }
 }
 // select *
 // from INFORMATION_SCHEMA.TABLE_CONSTRAINTS

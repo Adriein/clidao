@@ -2,23 +2,22 @@
 
 require('dotenv').config();
 import { PostgreRepository } from './Data/PostgreRepository';
+import { EnquirerAskForTablePrompt } from "./types";
 import enquirer from 'enquirer';
 import { DaoGenerator } from './DaoGenerator';
 
 const repo = new PostgreRepository();
+const generator = new DaoGenerator();
 
 (async () => {
-  const tables = await repo.getAllTablesMetadata();
+  const tables = await repo.getDbTableNames();
 
-  const response = await enquirer.prompt<{ tablename: string }>({
+  const { tablename } = await enquirer.prompt<EnquirerAskForTablePrompt>({
     type: 'select',
     name: 'tablename',
     message: 'From what table do you want to generate DAO?',
     choices: tables.map((table) => table.tablename),
   });
 
-  //await repo.getTableMetadata(response.tablename);
-
-  const generator = new DaoGenerator(response.tablename);
-  generator.generate();
+  await generator.execute(tablename);
 })();
