@@ -1,7 +1,7 @@
 import { PostgreRepository } from './Data/PostgreRepository';
-var Eta = require('eta')
+import { Strings } from "./Strings";
 import * as fs from 'fs';
-
+import Ejs from 'ejs';
 
 export class DaoGenerator {
   private repo = new PostgreRepository();
@@ -10,13 +10,23 @@ export class DaoGenerator {
 
   public async execute(tablename: string) {
     const tableMetadata = await this.repo.getTableColumns(tablename);
-    const template = fs.readFileSync(`${process.cwd()}/src/Templates/BaseTemplate.eta`, {encoding: 'utf-8'});
+    const template = fs.readFileSync(`${process.cwd()}/src/Templates/BaseTemplate.dao.ejs`, {encoding: 'utf-8'});
 
-    const dao = Eta.render(Eta.compile(template), { name: tablename, columns: tableMetadata.columns });
-    fs.writeFileSync(`${tablename}.ts`,dao);
+    const className = Strings.camelize(tablename, true);
+
+    const dao = Ejs.render(
+      template,
+      {
+        name: className,
+        columns: tableMetadata.columns,
+        lowerCaseName: tablename.toLowerCase()
+      }
+    );
+
+    fs.writeFileSync(`./${className}.ts`, dao);
   }
-
 }
+
 // select *
 // from INFORMATION_SCHEMA.TABLE_CONSTRAINTS
 // where constraint_schema ='public'

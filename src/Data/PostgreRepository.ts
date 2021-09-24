@@ -2,14 +2,12 @@ import { SchemaMetadataDAO } from './SchemaMetadataDAO';
 import { TableMetadataDAO } from './TableMetadataDAO';
 
 export class PostgreRepository {
-  public async getDbTableNames(): Promise<SchemaMetadataDTO[]> {
+  public async getDbTableNames(): Promise<string[]> {
     const dao = new SchemaMetadataDAO();
 
-    const tablesMetadata = await dao.getAll();
+    const tablesMetadata = await dao.getList();
 
-    return tablesMetadata.map(
-      (metadata: SchemaMetadataDAO) => new SchemaMetadataDTO(metadata.tablename)
-    );
+    return tablesMetadata.map((metadata: SchemaMetadataDAO) => metadata.tablename);
   }
 
   public async getTableColumns(tablename: string): Promise<TableMetadataDAO> {
@@ -17,8 +15,4 @@ export class PostgreRepository {
 
     return await dao.getOne(tablename);
   }
-}
-
-export class SchemaMetadataDTO {
-  constructor(public tablename: string) {}
 }

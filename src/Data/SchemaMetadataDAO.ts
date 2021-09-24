@@ -11,7 +11,7 @@ export class SchemaMetadataDAO {
   public hastriggers!: boolean;
   public rowsecurity!: boolean;
 
-  public async getAll(): Promise<SchemaMetadataDAO[]> {
+  public async getList(): Promise<SchemaMetadataDAO[]> {
     const query = `
       SELECT *
       FROM pg_catalog.pg_tables

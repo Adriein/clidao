@@ -1,15 +1,14 @@
-export class <%= it.name %>DAO extends AbstractDAO{
-    protected table: string = '<%= it.lowerCaseName %>';
+export class <%= name %>DAO extends AbstractDAO {
+    protected table: string = '<%= lowerCaseName %>';
+<% columns.forEach((column) => { %>
+    @column() <%= column.name() %>: <%= column.dataType() -%>
+<% }) %>
 
-    <% it.columns.forEach((column) => { %>
-    @column() <%= column %><%= '\r\n' %>
-    <% }) %>
-
-    public async getOne(relations?: string[]): Promise<<%= it.name %>DAO | undefined> {
+    public async getOne(relations?: string[]): Promise<<%= name %>DAO | undefined> {
         throw new Error('Method not implemented.');
     }
 
-    public async find(criteria?: any): Promise<<%= it.name %>DAO[] | undefined> {
+    public async find(criteria?: any): Promise<<%= name %>DAO[] | undefined> {
         throw new Error('Method not implemented.');
     }
 
