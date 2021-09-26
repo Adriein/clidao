@@ -58,7 +58,8 @@ export default class CliDao {
       enquirer.prompt,
       whichTableQuestion
     )
-    await this.commandLine.prompt(this.interactions.get(ConsoleInteractions.CREATING_DAO)!);
-    await this.generator.execute(tablename);
+    const generatorFn = this.generator.execute.bind(DaoGenerator.bind(PostgreRepository))
+    await this.commandLine.prompt(this.interactions.get(ConsoleInteractions.CREATING_DAO)!, generatorFn, tablename);
+
   }
 }

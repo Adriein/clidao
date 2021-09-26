@@ -7,13 +7,22 @@ export class CommandLine {
   public static WARN_STATUS: string = chalk.red('[Warn]:');
   public static FATAL_ERROR: string = chalk.red('[Fatal_Error]:');
 
-  public async prompt<T>({message, color, prefix}: ConsoleInteraction, task?: (...args: any[]) => any, ...args: any[]): Promise<T | void> {
+  public async prompt<T>(
+    {message, color, prefix}: ConsoleInteraction,
+    task?: (...args: any[]) => Promise<any> | any,
+    ...args: any[]
+  ): Promise<T | void> {
     return new Promise((resolve) => {
       const Ora = ora({interval: 150}).start(`${prefix} ${chalk[color](message)}`);
-
-      setTimeout(() => {
+      setTimeout(async () => {
         try {
-          if (task) {
+          if (task && this.isAsync(task)) {
+            const completion = await task(...args);
+            Ora.succeed(`${prefix} ${message} ${chalk.green('[success]')}`);
+            return resolve(completion);
+          }
+
+          if(task) {
             const completion = task(...args);
             Ora.succeed(`${prefix} ${message} ${chalk.green('[success]')}`);
             return resolve(completion);
@@ -25,7 +34,7 @@ export class CommandLine {
           Ora.fail(`${prefix} ${error.message} ${chalk.red('[failure]')}`);
           return resolve();
         }
-      }, 1500);
+      }, 800);
 
     });
 
@@ -34,5 +43,9 @@ export class CommandLine {
 
   public async ask<T, C>(fn: (...args: any[]) => Promise<T>, questions: C): Promise<T> {
     return await fn(questions);
+  }
+
+  private isAsync(fn: (...args: any[]) => any) {
+    return fn.constructor.name === 'AsyncFunction';
   }
 }

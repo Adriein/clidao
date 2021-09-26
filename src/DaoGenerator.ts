@@ -6,7 +6,7 @@ import Ejs from 'ejs';
 export class DaoGenerator {
   public constructor(private readonly repository: PostgreRepository) {}
 
-  public async execute(tablename: string) {
+  public execute = async (tablename: string): Promise<void> => {
     const tableMetadata = await this.repository.getTableColumns(tablename);
     const template = fs.readFileSync(`${process.cwd()}/src/Templates/BaseTemplate.dao.ejs`, {encoding: 'utf-8'});
 
@@ -24,8 +24,3 @@ export class DaoGenerator {
     fs.writeFileSync(`./${className}.ts`, dao);
   }
 }
-
-// select *
-// from INFORMATION_SCHEMA.TABLE_CONSTRAINTS
-// where constraint_schema ='public'
-// and constraint_type ='FOREIGN KEY';
