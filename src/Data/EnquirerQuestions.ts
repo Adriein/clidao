@@ -2,8 +2,8 @@ import Ejs from 'ejs';
 import { FileExplorer } from "../FileExplorer";
 
 export class EnquirerQuestions {
-  public static GENERATE_DAO: 'dao';
-  public static GENERATE_CONFIG: 'config';
+  public static GENERATE_DAO = 'dao';
+  public static GENERATE_CONFIG = 'config';
 
   private readonly _questions: Map<string, any>;
 

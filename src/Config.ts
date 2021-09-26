@@ -5,7 +5,9 @@ import { EnquirerQuestions } from "./Data/EnquirerQuestions";
 import { CommandLine } from "./CommandLine";
 
 export class Config {
-  public static readonly CONFIG_FILE: string = 'clidao.config.json'
+  public static readonly CONFIG_FILE: string = 'clidao.config.json';
+  public static readonly GIT_IGNORE: string = '.gitignore';
+
   private static fileManager = new FileExplorer();
   private static commandLine = new CommandLine();
   private static questions = new EnquirerQuestions(Config.fileManager);
@@ -23,9 +25,13 @@ export class Config {
     return this.fileManager.exist(`${process.cwd()}/${Config.CONFIG_FILE}`);
   }
 
-  public static loadConfigFile(): Config | undefined {
+  private static overrideGitIgnore(): void {
+    this.fileManager.appendLine(Config.CONFIG_FILE, `${process.cwd()}/${Config.GIT_IGNORE}`);
+  }
+
+  public static loadConfigFile(): Config {
     if (!this.hasConfigFile()) {
-      return undefined;
+      throw new Error('No config found');
     }
 
     const configJSON = JSON.parse(this.fileManager.load(`${process.cwd()}/${Config.CONFIG_FILE}`));
@@ -47,14 +53,16 @@ export class Config {
 
     const input = JSON.stringify(response.config.values, null, 2);
 
-    if(Config.isEmpty(input)) {
+    if (Config.isEmpty(JSON.parse(input))) {
       const template = this.fileManager.load(`${process.cwd()}/src/Templates/GenerateConfigTemplate.ejs`);
 
       this.fileManager.write(template, `${process.cwd()}/${Config.CONFIG_FILE}`);
+      this.overrideGitIgnore();
       return;
     }
 
     this.fileManager.write(input, `${process.cwd()}/${Config.CONFIG_FILE}`);
+    this.overrideGitIgnore();
   }
 
   private static isEmpty(obj: any): boolean {

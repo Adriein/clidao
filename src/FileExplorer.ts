@@ -12,4 +12,8 @@ export class FileExplorer {
   public write(content: string, path: string): void {
     fs.writeFileSync(path, content);
   }
+
+  public appendLine(content: string, path: string): void {
+    fs.appendFileSync(path, `\r\n${content}`);
+  }
 }

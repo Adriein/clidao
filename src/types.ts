@@ -1,3 +1,6 @@
+import { Config } from "./Config";
+import { CommandLine } from "./CommandLine";
+
 export type EnquirerAskForTablesResponse = { tablename: string };
 export type EnquirerAskForConfigResponse = {
   config: {
@@ -17,7 +20,30 @@ export type EnquirerAskForTablesRequest = {
   choices: string[],
 };
 
-export type ChalkColors = {
-  blue: 'blue';
-  magenta: 'magenta';
+type ForegroundColor = {
+  black: 'black'
+  red: 'red'
+  green: 'green'
+  yellow: 'yellow'
+  blue: 'blue'
+  magenta: 'magenta'
+  cyan: 'cyan'
+  white: 'white'
+  gray: 'gray'
+  grey: 'grey'
+  blackBright: 'blackBright'
+  redBright: 'redBright'
+  greenBright: 'greenBright'
+  yellowBright: 'yellowBright'
+  blueBright: 'blueBright'
+  magentaBright: 'magentaBright'
+  cyanBright: 'cyanBright'
+  whiteBright: 'whiteBright'
+}
+export type Color = ForegroundColor;
+
+export type ConsoleInteraction = {
+  message: string;
+  color: keyof Color;
+  prefix: string;
 }
