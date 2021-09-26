@@ -4,12 +4,10 @@ import * as fs from 'fs';
 import Ejs from 'ejs';
 
 export class DaoGenerator {
-  private repo = new PostgreRepository();
-
-  public constructor() {}
+  public constructor(private readonly repository: PostgreRepository) {}
 
   public async execute(tablename: string) {
-    const tableMetadata = await this.repo.getTableColumns(tablename);
+    const tableMetadata = await this.repository.getTableColumns(tablename);
     const template = fs.readFileSync(`${process.cwd()}/src/Templates/BaseTemplate.dao.ejs`, {encoding: 'utf-8'});
 
     const className = Strings.camelize(tablename, true);

@@ -1,9 +1,11 @@
 import Ejs from 'ejs';
 import { FileExplorer } from "../FileExplorer";
+import { Config } from "../Config";
 
 export class EnquirerQuestions {
   public static GENERATE_DAO = 'dao';
   public static GENERATE_CONFIG = 'config';
+  public static DELETE_CONFIG = 'delete';
 
   private readonly _questions: Map<string, any>;
 
@@ -44,6 +46,11 @@ export class EnquirerQuestions {
             }
           ],
           template: Ejs.render(configTemplate),
+        }],
+        [EnquirerQuestions.DELETE_CONFIG, {
+          type: 'confirm',
+          name: 'delete',
+          message: `Are you sure do you want to delete ${Config.CONFIG_FILE}`,
         }]
       ]
     );

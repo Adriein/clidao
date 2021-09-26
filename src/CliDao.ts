@@ -1,35 +1,56 @@
 import { PostgreRepository } from "./Data/PostgreRepository";
 import { DaoGenerator } from "./DaoGenerator";
-import { FileExplorer } from "./FileExplorer";
 import { Config } from "./Config";
 import { CommandLine } from "./CommandLine";
 import { ConsoleInteractions } from "./Data/ConsoleInteractions";
 import { EnquirerQuestions } from "./Data/EnquirerQuestions";
-import { EnquirerAskForTablesRequest, EnquirerAskForTablesResponse } from "./types";
+import {
+  ConsoleInteraction,
+  EnquirerAskForDeletionResponse,
+  EnquirerAskForTablesRequest,
+  EnquirerAskForTablesResponse
+} from "./types";
 import enquirer from "enquirer";
 
-
-const repo = new PostgreRepository();
-const generator = new DaoGenerator();
-const explorer = new FileExplorer();
-
 export default class CliDao {
-  private readonly commandLine = new CommandLine();
-  private readonly interactions = new ConsoleInteractions();
-  private readonly questions = new EnquirerQuestions(explorer);
+
+  public constructor(
+    private readonly commandLine: CommandLine,
+    private readonly generator: DaoGenerator,
+    private readonly repository: PostgreRepository,
+    private readonly interactions: Map<string, ConsoleInteraction>,
+    private readonly questions: Map<string, any>
+  ) {
+  }
 
   public async init(): Promise<void> {
-    const checkConfigInteraction = this.interactions.storage().get(ConsoleInteractions.CHECK_CONFIG)!;
+    const checkConfigInteraction = this.interactions.get(ConsoleInteractions.CHECK_CONFIG)!;
     const config = await this.commandLine.prompt<Config>(checkConfigInteraction, Config.loadConfigFile.bind(Config));
 
     if (!config) {
-      await this.commandLine.prompt(this.interactions.storage().get(ConsoleInteractions.GENERATE_CONFIG)!);
-      await this.commandLine.prompt(this.interactions.storage().get(ConsoleInteractions.PRIVACY)!);
+      await this.commandLine.prompt(this.interactions.get(ConsoleInteractions.GENERATE_CONFIG)!);
+      await this.commandLine.prompt(this.interactions.get(ConsoleInteractions.PRIVACY)!);
       await Config.create();
     }
+  }
 
-    const whichTableQuestion = this.questions.storage().get(EnquirerQuestions.GENERATE_DAO);
-    const tableNames = await repo.getDbTableNames();
+  public async remove(): Promise<void> {
+    const permission = await this.commandLine.ask<EnquirerAskForDeletionResponse, any>(
+      enquirer.prompt,
+      this.questions.get(EnquirerQuestions.DELETE_CONFIG)
+    );
+    console.log(permission)
+    if (permission.delete) {
+      console.log('me cargo todo')
+    }
+  }
+
+  public async generate(): Promise<void> {
+    const whichTableQuestion = this.questions.get(EnquirerQuestions.GENERATE_DAO);
+    const tableNames = await this.commandLine.prompt<string[]>(
+      this.interactions.get(ConsoleInteractions.GET_TABLES)!,
+      this.repository.getDbTableNames
+    ) as string[];
 
     whichTableQuestion.choices = [...tableNames];
 
@@ -37,8 +58,7 @@ export default class CliDao {
       enquirer.prompt,
       whichTableQuestion
     )
-
-    await generator.execute(tablename);
-
+    await this.commandLine.prompt(this.interactions.get(ConsoleInteractions.CREATING_DAO)!);
+    await this.generator.execute(tablename);
   }
 }

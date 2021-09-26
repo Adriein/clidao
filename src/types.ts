@@ -1,7 +1,5 @@
-import { Config } from "./Config";
-import { CommandLine } from "./CommandLine";
-
 export type EnquirerAskForTablesResponse = { tablename: string };
+export type EnquirerAskForDeletionResponse = { delete: boolean };
 export type EnquirerAskForConfigResponse = {
   config: {
     values: {
