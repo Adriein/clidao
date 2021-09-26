@@ -17,11 +17,13 @@ export class EnquirerQuestions {
           type: 'select',
           name: 'tablename',
           message: 'From what table do you want to generate DAO?',
+          prefix: (state: any) => state.submitted === true? '✔' : '?',
           choices: [],
         }],
         [EnquirerQuestions.GENERATE_CONFIG, {
           type: 'snippet',
           name: 'config',
+          prefix: (state: any) => state.submitted === true? '✔' : '?',
           message: 'Fill the fields in order to create clidao.config.json',
           fields: [
             {
@@ -50,6 +52,7 @@ export class EnquirerQuestions {
         [EnquirerQuestions.DELETE_CONFIG, {
           type: 'confirm',
           name: 'delete',
+          prefix: (state: any) => state.submitted === true? '✔' : '?',
           message: `Are you sure do you want to delete ${Config.CONFIG_FILE}`,
         }]
       ]
